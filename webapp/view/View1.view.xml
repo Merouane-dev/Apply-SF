@@ -1,0 +1,297 @@
+<mvc:View
+    controllerName="vignette.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core" 
+    displayBlock="true">
+
+    <Page id="page" title="{i18n>serviceFaitTitle}">
+
+        <!-- PARTIE 1 : CHAMPS DE RECHERCHE -->
+        <Panel id="searchPanel">
+            <HBox
+                id="searchBox"
+                renderType="Bare"
+                class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom">
+                
+                <!-- Fournisseur -->
+                <VBox id="_IDGenVBox1" class="sapUiSmallMargin">
+                    <Label id="_IDGenLabel" text="{i18n>fournisseur}" />
+                    <Input id="_IDGenInput"
+                        value="{myModel>/filters/fournisseur}"
+                        placeholder="Rechercher..." />
+                </VBox>
+
+                <!-- Demandeur -->
+                <VBox id="_IDGenVBox2" class="sapUiSmallMargin">
+                    <Label id="_IDGenLabel1" text="{i18n>demandeur}" />
+                    <Input id="_IDGenInput1"
+                        value="{myModel>/filters/demandeur}"
+                        placeholder="Rechercher..." />
+                </VBox>
+
+                <!-- Demande d'achat -->
+                <VBox id="_IDGenVBox3" class="sapUiSmallMargin">
+                    <Label id="_IDGenLabel2" text="{i18n>demandeAchat}" />
+                    <Input id="_IDGenInput2"
+                        value="{myModel>/filters/demande_achat}"
+                        placeholder="Rechercher..." />
+                </VBox>
+
+                <!-- Commande d'achat -->
+                <VBox id="_IDGenVBox4" class="sapUiSmallMargin">
+                    <Label id="_IDGenLabel3" text="{i18n>commandeAchat}" />
+                    <Input id="_IDGenInput3"
+                        value="{myModel>/filters/commande_achat}"
+                        placeholder="Rechercher..." />
+                </VBox>
+
+                <!-- Date de livraison -->
+                <VBox id="_IDGenVBox5" class="sapUiSmallMargin">
+                    <Label id="_IDGenLabel4" text="{i18n>dateLivraison}" />
+                    <DatePicker id="_IDGenDatePicker"
+                        value="{myModel>/filters/date_livraison}"
+                        displayFormat="long" />
+                </VBox>
+
+                <!-- Bouton "Appliquer" -->
+                <VBox id="_IDGenVBox6" class="sapUiSmallMargin">
+                    <Button id="_IDGenButton" width="100px" 
+                        text="{i18n>applyButton}"
+                        press=".onFilterApply" />
+
+                      <Button id="_IDGenButton4" width="100px" 
+                        text="{i18n>clearButton}"
+                        press=".onResetFilters" />
+                </VBox>
+            </HBox>
+        </Panel>
+
+        <!-- PARTIE 2 : LISTE DES DEMANDES (Table) -->
+        <Panel
+            id="panelListeDemandes"
+            headerText="{i18n>partie2Title}">
+            
+            <Table id="_IDGenTable"
+                items="{myModel>/demandes}"
+                inset="false">
+                <!-- Colonnes -->
+                <columns>
+                    <Column id="_IDGenColumn">
+                        <Text id="_IDGenText" text="{i18n>demandeAchatCol}" />
+                    </Column>
+                    <Column id="_IDGenColumn1">
+                        <Text id="_IDGenText1" text="{i18n>commandeAchatCol}" />
+                    </Column>
+                    <Column id="_IDGenColumn2">
+                        <Text id="_IDGenText2" text="{i18n>demandeurCol}" />
+                    </Column>
+                    <Column id="_IDGenColumn3">
+                        <Text id="_IDGenText3" text="{i18n>dateLivraisonCol}" />
+                    </Column>
+                    <Column id="_IDGenColumn4">
+                        <Text id="_IDGenText4" text="{i18n>fournisseurCol}" />
+                    </Column>
+                    <Column id="_IDGenColumn5">
+                        <Text id="_IDGenText5" text="{i18n>montantTotalCol}" />
+                    </Column>
+                    <!-- Bouton sélection en masse -->
+                    <Column id="_IDGenColumn6">
+                        <Button id="_IDGenButton1"
+                            icon="sap-icon://accept"
+                            tooltip="{i18n>selectAllTooltip}"
+                            press="onSelectAll"
+                            class="sapUiTinyMarginBegin" />
+                    </Column>
+                </columns>
+
+                <!-- Items -->
+                <items>
+                    <ColumnListItem id="_IDGenColumnListItem"
+                        type="Active"
+                        press=".onSelectDemande">
+                        <ObjectIdentifier id="_IDGenObjectIdentifier" title="{myModel>demandeAchatId}" />
+                        <ObjectIdentifier id="_IDGenObjectIdentifier1" title="{myModel>commandeAchatId}" />
+                        <ObjectIdentifier id="_IDGenObjectIdentifier2" text="{myModel>demandeur}" />
+                        <ObjectIdentifier id="_IDGenObjectIdentifier3" text="{myModel>dateLivraison}" />
+                        <ObjectIdentifier id="_IDGenObjectIdentifier4" text="{myModel>fournisseur}" />
+                        <ObjectIdentifier id="_IDGenObjectIdentifier5" text="{myModel>montantTotal}" />
+                        <CheckBox id="_IDGenCheckBox" selected="{myModel>selected}" select=".onCheckBoxSelect" />
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </Panel>
+
+        <!-- PANEL : LISTE DES DA SELECTIONNEES + DETAILS -->
+        <!-- On boucle sur /selectedDA pour afficher infos + détail pour CHAQUE DA -->
+        <Panel
+            id="panelSelectedDAs"
+            class="sapUiSmallMargin">
+          <!-- En-tête du Panel sous forme de Toolbar -->
+    <headerToolbar>
+        <Toolbar id="_IDGenToolbar2">
+            <Title id="_IDGenTitle1" text="{i18n>informationsGenerales}" />
+           
+            <HBox id="_IDGenHBox4" items="{myModel>/selectedDA}" renderType="Bare">
+                <items>
+                    <HBox id="_IDGenHBox5">
+                        <Link id="_IDGenLink1"
+                            text="{myModel>demandeAchatId}"
+                            press=".onOpenPdf">
+                            <customData>
+                                <core:CustomData
+                                    key="pdfUrl"
+                                    value="{myModel>pdfUrl}"/>
+                            </customData>
+                        </Link>
+                        <Text id="_IDGenText22" text=" - "   visible="{= ${myModel>demandeAchatId}.length > 1 }" />
+                    </HBox>
+                </items>
+            </HBox>
+        </Toolbar>
+    </headerToolbar>
+
+            <List id="_IDGenList" items="{myModel>/selectedDA}">
+                <CustomListItem id="_IDGenCustomListItem">
+                <HBox id="_IDGenHBox2" ></HBox>
+                    <VBox id="_IDGenVBox7" class="sapUiSmallMargin">
+
+                        <!-- Titre + Lien PDF -->
+                        <HBox id="_IDGenHBox" class="sapUiSmallMarginBottom">
+                            <HBox id="_IDGenHBox3" >
+                            <!-- N° Demande d'achat : Lien sur le texte de la DA -->
+                            <VBox id="_IDGenVBox8" class="sapUiSmallMarginEnd">
+                                <Label id="_IDGenLabel5" text="{i18n>noDemandeAchat}" />
+                                <Link id="_IDGenLink"
+                                    text="{myModel>demandeAchatId}"
+                                    press=".onOpenPdf">
+                                    <!-- Stocker l'URL PDF dans la customData -->
+                                    <customData>
+                                        <core:CustomData
+                                            key="pdfUrl"
+                                            value="{myModel>pdfUrl}" />
+                                    </customData>
+                                </Link>
+                            </VBox>
+
+                            <!-- Nom du fournisseur -->
+                            <VBox id="_IDGenVBox9" class="sapUiSmallMarginEnd">
+                                <Label id="_IDGenLabel6" text="{i18n>nomFournisseur}" />
+                                <Text id="_IDGenText6" text="{myModel>details/nomFournisseur}" />
+                            </VBox>
+
+                            <!-- Commande d'achat -->
+                            <VBox id="_IDGenVBox10" class="sapUiSmallMarginEnd">
+                                <Label id="_IDGenLabel7" text="{i18n>commandeAchat}" />
+                                <Text id="_IDGenText7" text="{myModel>commandeAchatId}" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Ligne #2 : Demandeur + Montant + Bon de livraison -->
+                        <HBox id="_IDGenHBox1" class="sapUiSmallMarginBottom">
+                            <!-- Demandeur -->
+                            <VBox id="_IDGenVBox11" class="sapUiSmallMarginEnd">
+                                <Label id="_IDGenLabel8" text="{i18n>demandeur}" />
+                                <Text id="_IDGenText8" text="{myModel>details/demandeur}" />
+                            </VBox>
+
+                            <!-- Montant commande -->
+                            <VBox id="_IDGenVBox12" class="sapUiSmallMarginEnd">
+                                <Label id="_IDGenLabel9" text="{i18n>montantCommande}" />
+                                <Text id="_IDGenText9" text="{myModel>details/montantCommande}" />
+                            </VBox>
+
+                            <!-- Bon de livraison -->
+                            <VBox id="_IDGenVBox13" class="sapUiSmallMarginEnd">
+                                <Label id="_IDGenLabel10" text="{i18n>bonLivraison}" />
+                                <Text id="_IDGenText10" text="{myModel>details/bonLivraison}" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Ligne #3 : Texte en-tête -->
+                        <VBox id="_IDGenVBox14" class="sapUiSmallMarginBottom">
+                            <Label id="_IDGenLabel11" text="{i18n>texteEntete}" />
+                            <Text id="_IDGenText11" text="{myModel>details/texteEntete}" />
+                        </VBox>
+
+                        </HBox>
+
+                        <!-- Titre "Détail de la commande" -->
+                        <Title id="_IDGenTitle"
+                            text="{i18n>detailCommandeTitle}"
+                            level="H2"
+                            class="sapUiSmallMarginTop" />
+
+                        <!-- Tableau des postes, propre à cette DA -->
+                        <Table id="_IDGenTable1"
+                            items="{myModel>details/postes}"
+                            inset="false">
+                            <columns>
+                                <Column id="_IDGenColumn7">
+                                    <Text id="_IDGenText12" text="{i18n>posteCommande}" />
+                                </Column>
+                                <Column id="_IDGenColumn8">
+                                    <Text id="_IDGenText13" text="{i18n>articleCommande}" />
+                                </Column>
+                                <Column id="_IDGenColumn9">
+                                    <Text id="_IDGenText14" text="{i18n>nomSite}" />
+                                </Column>
+                                <Column id="_IDGenColumn10">
+                                    <Text id="_IDGenText15" text="{i18n>datePrevue}" />
+                                </Column>
+                                <Column id="_IDGenColumn11">
+                                    <Text id="_IDGenText16" text="{i18n>dateReelle}" />
+                                </Column>
+                                <Column id="_IDGenColumn12">
+                                    <Text id="_IDGenText17" text="{i18n>quantiteAttendue}" />
+                                </Column>
+                                <Column id="_IDGenColumn13">
+                                    <Text id="_IDGenText18" text="{i18n>quantiteLivree}" />
+                                </Column>
+                                <Column id="_IDGenColumn14">
+                                    <Text id="_IDGenText19" text="{i18n>unite}" />
+                                </Column>
+                                <Column id="_IDGenColumn15">
+                                    <Text id="_IDGenText20" text="{i18n>livraisonComplete}" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem id="_IDGenColumnListItem1">
+                                    <ObjectIdentifier id="_IDGenObjectIdentifier6" text="{myModel>posteId}" />
+                                    <ObjectIdentifier id="_IDGenObjectIdentifier7" text="{myModel>article}" />
+                                    <ObjectIdentifier id="_IDGenObjectIdentifier8" text="{myModel>nomSite}" />
+                                    <ObjectIdentifier id="_IDGenObjectIdentifier9" text="{myModel>datePrevue}" />
+                                    <Input id="_IDGenInput4"
+                                        value="{myModel>dateReelle}"
+                                        width="100px" />
+                                    <ObjectIdentifier id="_IDGenObjectIdentifier10" text="{myModel>quantiteAttendue}" />
+                                    <Input id="_IDGenInput5"
+                                        value="{myModel>quantiteLivree}"
+                                        width="80px" />
+                                    <Text id="_IDGenText21" text="Pc" />
+                                    <CheckBox id="_IDGenCheckBox1" selected="{myModel>livraisonComplete}" />
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+
+                    </VBox>
+                </CustomListItem>
+            </List>
+        </Panel>
+
+        <!-- TOOLBAR BAS DE PAGE : BOUTONS -->
+        <Toolbar id="_IDGenToolbar" style="Clear">
+            <ToolbarSpacer id="_IDGenToolbarSpacer"/>
+            <Button id="_IDGenButton2"
+                text="{i18n>pieceJointe}"
+                type="Transparent"
+                icon="sap-icon://attachment"
+                press=".onPieceJointe" />
+            <Button id="_IDGenButton3"
+                text="{i18n>approver}"
+                type="Accept"
+                press=".onApprove" />
+        </Toolbar>
+
+    </Page>
+</mvc:View>

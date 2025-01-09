@@ -1,0 +1,198 @@
+{
+    "filters": {
+      "fournisseur": "",
+      "demandeur": "",
+      "demande_achat": "",
+      "commande_achat": "",
+      "date_livraison": ""
+    },
+    "demandes": [
+      {
+        "demandeAchatId": "300000346",
+        "commandeAchatId": "440000105",
+        "demandeur": "Michel ROUSSEAU",
+        "dateLivraison": "2024-06-17",
+        "fournisseur": "Lyreco",
+        "montantTotal": "500 € TTC",
+        "selected": false,
+        "pdfUrl": "assets/pdf/demande_300000346.pdf",
+        "details": {
+          "nomFournisseur": "Lyreco",
+          "demandeur": "Michel ROUSSEAU",
+          "montantCommande": "500 € TTC",
+          "bonLivraison": "BON-LIV",
+          "texteEntete": "Commande pour fournitures de bureau (stylo, post-it...)",
+          "postes": [
+            {
+              "posteId": "10",
+              "article": "Agrafeuse",
+              "nomSite": "Agence Poitiers",
+              "datePrevue": "2024-06-17",
+              "dateReelle": "2024-06-17",
+              "quantiteAttendue": "10 pièces",
+              "quantiteLivree": "10 pièces",
+              "livraisonComplete": false
+            },
+            {
+              "posteId": "20",
+              "article": "Ramette de papier",
+              "nomSite": "Agence Paris",
+              "datePrevue": "2024-06-05",
+              "dateReelle": "2024-06-17",
+              "quantiteAttendue": "200 pièces",
+              "quantiteLivree": "200 pièces",
+              "livraisonComplete": false
+            },
+            {
+              "posteId": "30",
+              "article": "Stylo bleu",
+              "nomSite": "Agence Paris",
+              "datePrevue": "2024-06-16",
+              "dateReelle": "2024-06-17",
+              "quantiteAttendue": "50 pièces",
+              "quantiteLivree": "50 pièces",
+              "livraisonComplete": false
+            },
+            {
+              "posteId": "40",
+              "article": "Post-it",
+              "nomSite": "Agence Paris",
+              "datePrevue": "2024-06-17",
+              "dateReelle": "2024-06-17",
+              "quantiteAttendue": "500 pièces",
+              "quantiteLivree": "500 pièces",
+              "livraisonComplete": false
+            }
+          ]
+        }
+      },
+      {
+        "demandeAchatId": "300000347",
+        "commandeAchatId": "440000106",
+        "demandeur": "Michel DUPONT",
+        "dateLivraison": "2024-09-20",
+        "fournisseur": "Fournicash",
+        "montantTotal": "1 200 € TTC",
+        "selected": false,
+        "pdfUrl": "assets/pdf/demande_300000347.pdf",
+        "details": {
+          "nomFournisseur": "Fournicash",
+          "demandeur": "Michel DUPONT",
+          "montantCommande": "1 200 € TTC",
+          "bonLivraison": "BL-2024-DUPONT",
+          "texteEntete": "Commande diverses fournitures IT.",
+          "postes": [
+            {
+              "posteId": "10",
+              "article": "Classeur A4",
+              "nomSite": "Agence Lyon",
+              "datePrevue": "2024-09-15",
+              "dateReelle": "",
+              "quantiteAttendue": "30 pièces",
+              "quantiteLivree": "0 pièces",
+              "livraisonComplete": false
+            },
+            {
+              "posteId": "20",
+              "article": "Cartouche encre",
+              "nomSite": "Agence Lyon",
+              "datePrevue": "2024-09-20",
+              "dateReelle": "",
+              "quantiteAttendue": "100 pièces",
+              "quantiteLivree": "",
+              "livraisonComplete": false
+            },
+            {
+              "posteId": "30",
+              "article": "Toner",
+              "nomSite": "Agence Lyon",
+              "datePrevue": "2024-09-20",
+              "dateReelle": "",
+              "quantiteAttendue": "10 pièces",
+              "quantiteLivree": "",
+              "livraisonComplete": false
+            }
+          ]
+        }
+      },
+      {
+        "demandeAchatId": "300000348",
+        "commandeAchatId": "440000107",
+        "demandeur": "Sophie MARTIN",
+        "dateLivraison": "2025-01-05",
+        "fournisseur": "OfficePro",
+        "montantTotal": "250 € TTC",
+        "selected": false,
+        "pdfUrl": "assets/pdf/demande_300000348.pdf",
+        "details": {
+          "nomFournisseur": "OfficePro",
+          "demandeur": "Sophie MARTIN",
+          "montantCommande": "250 € TTC",
+          "bonLivraison": "",
+          "texteEntete": "Commande modeste pour l'équipe RH",
+          "postes": [
+            {
+              "posteId": "10",
+              "article": "Boîte d'archivage",
+              "nomSite": "Agence Marseille",
+              "datePrevue": "2025-01-04",
+              "dateReelle": "",
+              "quantiteAttendue": "20 pièces",
+              "quantiteLivree": "",
+              "livraisonComplete": false
+            },
+            {
+              "posteId": "20",
+              "article": "Surligneurs",
+              "nomSite": "Agence Marseille",
+              "datePrevue": "2025-01-05",
+              "dateReelle": "",
+              "quantiteAttendue": "15 pièces",
+              "quantiteLivree": "",
+              "livraisonComplete": false
+            }
+          ]
+        }
+      },
+      {
+        "demandeAchatId": "300000349",
+        "commandeAchatId": "440000108",
+        "demandeur": "Anne LEBLANC",
+        "dateLivraison": "2024-12-31",
+        "fournisseur": "Lyreco",
+        "montantTotal": "800 € TTC",
+        "selected": false,
+        "pdfUrl": "assets/pdf/demande_300000349.pdf",
+        "details": {
+          "nomFournisseur": "Lyreco",
+          "demandeur": "Anne LEBLANC",
+          "montantCommande": "800 € TTC",
+          "bonLivraison": "BL-LEBLANC-2024",
+          "texteEntete": "Préparation de fin d'année",
+          "postes": [
+            {
+              "posteId": "10",
+              "article": "Boîtes de classement",
+              "nomSite": "Agence Bordeaux",
+              "datePrevue": "2024-12-30",
+              "dateReelle": "",
+              "quantiteAttendue": "50 pièces",
+              "quantiteLivree": "",
+              "livraisonComplete": false
+            },
+            {
+              "posteId": "20",
+              "article": "Agendas 2025",
+              "nomSite": "Agence Bordeaux",
+              "datePrevue": "2024-12-31",
+              "dateReelle": "",
+              "quantiteAttendue": "70 pièces",
+              "quantiteLivree": "",
+              "livraisonComplete": false
+            }
+          ]
+        }
+      }
+    ]
+  }
+  
