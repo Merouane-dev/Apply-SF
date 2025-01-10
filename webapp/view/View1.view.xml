@@ -35,7 +35,8 @@
                     <Label id="_IDGenLabel2" text="{i18n>demandeAchat}" />
                     <Input id="_IDGenInput2"
                         value="{myModel>/filters/demande_achat}"
-                        placeholder="Rechercher..." />
+                        placeholder="Rechercher..." 
+                        type="Number"/>
                 </VBox>
 
                 <!-- Commande d'achat -->
@@ -43,7 +44,8 @@
                     <Label id="_IDGenLabel3" text="{i18n>commandeAchat}" />
                     <Input id="_IDGenInput3"
                         value="{myModel>/filters/commande_achat}"
-                        placeholder="Rechercher..." />
+                        placeholder="Rechercher..."
+                        type="Number" />
                 </VBox>
 
                 <!-- Date de livraison -->
@@ -51,9 +53,11 @@
                     <Label id="_IDGenLabel4" text="{i18n>dateLivraison}" />
                     <DatePicker id="_IDGenDatePicker"
                         value="{myModel>/filters/date_livraison}"
-                        displayFormat="long" />
+                        displayFormat="dd/MM/yyyy"
+                        placeholder="Rechercher..."
+                       />
                 </VBox>
-
+                
                 <!-- Bouton "Appliquer" -->
                 <VBox id="_IDGenVBox6" class="sapUiSmallMargin">
                     <Button id="_IDGenButton" width="100px" 
@@ -70,7 +74,7 @@
         <!-- PARTIE 2 : LISTE DES DEMANDES (Table) -->
         <Panel
             id="panelListeDemandes"
-            headerText="{i18n>partie2Title}">
+            headerText="{i18n>partie2Title}"  >
             
             <Table id="_IDGenTable"
                 items="{myModel>/demandes}"
@@ -122,14 +126,14 @@
             </Table>
         </Panel>
 
-        <!-- PANEL : LISTE DES DA SELECTIONNEES + DETAILS -->
+        <!-- PArtie 3 : LISTE DES DA SELECTIONNEES + DETAILS -->
         <!-- On boucle sur /selectedDA pour afficher infos + détail pour CHAQUE DA -->
         <Panel
             id="panelSelectedDAs"
             class="sapUiSmallMargin">
           <!-- En-tête du Panel sous forme de Toolbar -->
-    <headerToolbar>
-        <Toolbar id="_IDGenToolbar2">
+         <headerToolbar>
+         <Toolbar id="_IDGenToolbar2">
             <Title id="_IDGenTitle1" text="{i18n>informationsGenerales}" />
            
             <HBox id="_IDGenHBox4" items="{myModel>/selectedDA}" renderType="Bare">
@@ -137,19 +141,23 @@
                     <HBox id="_IDGenHBox5">
                         <Link id="_IDGenLink1"
                             text="{myModel>demandeAchatId}"
-                            press=".onOpenPdf">
+                            press=".onOpenPdf"
+                            >
                             <customData>
                                 <core:CustomData
                                     key="pdfUrl"
                                     value="{myModel>pdfUrl}"/>
                             </customData>
                         </Link>
-                        <Text id="_IDGenText22" text=" - "   visible="{= ${myModel>demandeAchatId}.length > 1 }" />
+                       <items>
+                           <core:Icon id="_IDGenIcon" src="sap-icon://pdf-attachment" />
+                       </items>
+                       
                     </HBox>
                 </items>
             </HBox>
-        </Toolbar>
-    </headerToolbar>
+         </Toolbar>
+         </headerToolbar>
 
             <List id="_IDGenList" items="{myModel>/selectedDA}">
                 <CustomListItem id="_IDGenCustomListItem">
@@ -254,6 +262,13 @@
                                 <Column id="_IDGenColumn15">
                                     <Text id="_IDGenText20" text="{i18n>livraisonComplete}" />
                                 </Column>
+                                  <Column id="_IDGenColumn16" >
+                                     <Button id="_IDGenButton2" 
+                                               icon="sap-icon://accept"
+                                               tooltip="{i18n>selectAllLivraisonTooltip}"
+                                               press="onSelectAllLivraison "
+                                               />
+                                 </Column>
                             </columns>
                             <items>
                                 <ColumnListItem id="_IDGenColumnListItem1">
@@ -261,9 +276,10 @@
                                     <ObjectIdentifier id="_IDGenObjectIdentifier7" text="{myModel>article}" />
                                     <ObjectIdentifier id="_IDGenObjectIdentifier8" text="{myModel>nomSite}" />
                                     <ObjectIdentifier id="_IDGenObjectIdentifier9" text="{myModel>datePrevue}" />
-                                    <Input id="_IDGenInput4"
+                                    <DatePicker id="_IDGenInput4"
                                         value="{myModel>dateReelle}"
-                                        width="100px" />
+                                         displayFormat="long"
+                                         placeholder=" " />
                                     <ObjectIdentifier id="_IDGenObjectIdentifier10" text="{myModel>quantiteAttendue}" />
                                     <Input id="_IDGenInput5"
                                         value="{myModel>quantiteLivree}"
@@ -279,19 +295,19 @@
             </List>
         </Panel>
 
-        <!-- TOOLBAR BAS DE PAGE : BOUTONS -->
-        <Toolbar id="_IDGenToolbar" style="Clear">
-            <ToolbarSpacer id="_IDGenToolbarSpacer"/>
-            <Button id="_IDGenButton2"
-                text="{i18n>pieceJointe}"
-                type="Transparent"
-                icon="sap-icon://attachment"
-                press=".onPieceJointe" />
-            <Button id="_IDGenButton3"
+
+          <!-- TOOLBAR BAS DE PAGE : BOUTONS -->
+         <footer>
+            <Bar id="_IDGenBar1">
+               
+                <contentRight>
+                    <Button id="_IDGenButton3"
                 text="{i18n>approver}"
                 type="Accept"
-                press=".onApprove" />
-        </Toolbar>
-
+                press=".onApprove" 
+                enabled="false"/>
+                </contentRight>
+            </Bar>
+        </footer>
     </Page>
 </mvc:View>

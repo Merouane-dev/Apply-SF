@@ -55,6 +55,40 @@ sap.ui.define([
             this._refreshSelectedDA();
         },
 
+         /**
+         * Même principe pour "onSelectAllLivraison", 
+         * mais appliqué à la propriété 'livraisonComplete' 
+         * dans le tableau de postes, pour chaque DA sélectionnée.
+         */
+         onSelectAllLivraison: function(oEvent) {
+            // 1. Récupérer la table sur laquelle on a cliqué.
+            //    Le bouton est dans la <Column>, donc on remonte
+            //    au parent (la colonne), puis au parent de la colonne (la Table).
+            const oTable = oEvent.getSource().getParent().getParent();
+
+            // 2. Récupérer le contexte de binding de cette table
+            //    (chaque Table est répétée pour chaque DA dans /selectedDA).
+            const oCtx = oTable.getBindingContext("myModel");
+            if (!oCtx) return;
+
+            const sPath = oCtx.getPath(); // ex: "/selectedDA/0"
+            const oModel = this.getView().getModel("myModel");
+
+            // 3. Récupérer le tableau des postes (details/postes) de la DA en question.
+            let aPostes = oModel.getProperty(sPath + "/details/postes") || [];
+
+            // 4. Vérifier s'il existe au moins un poste pas encore livré (livraisonComplete = false)
+            const bShouldSelectAll = aPostes.some(item => item.livraisonComplete === false);
+
+            // 5. Mettre à jour la propriété 'livraisonComplete' de tous les postes
+            aPostes.forEach(item => item.livraisonComplete = bShouldSelectAll);
+
+            // 6. Mettre à jour le modèle
+            oModel.setProperty(sPath + "/details/postes", aPostes);
+            oModel.updateBindings(true);
+        },
+
+
         /**
          * Event press sur la ligne (type="Active").
          * Par défaut, ça ne coche pas la checkbox => 
@@ -62,8 +96,6 @@ sap.ui.define([
          * d'afficher autre chose.
          */
         onSelectDemande: function(oEvent) {
-            console.log("onSelectDemande : clic sur la ligne");
-            
             // 1. Récupérer la ligne (ColumnListItem)
             const oItem = oEvent.getSource();
             // 2. Récupérer le contexte
@@ -116,10 +148,27 @@ sap.ui.define([
 
             // Mettre à jour la propriété "/selectedDA"
             oModel.setProperty("/selectedDA", aSelected);
+        
+         
+        //  // (1) Vérifier s’il y a au moins une DA sélectionnée
+        //  // (2) Parmi celles-ci, au moins une doit avoir tous ses postes "livraisonComplete" = true
+         
+        //  let bCanApprove = false;
 
-            console.log("Selected DA => ", aSelected);
+        // if (aSelected.length > 0) {
+        //  bCanApprove = aSelected.some(function (da) {
+        //     // Récupérer les postes de cette DA
+        //     const aPostes = da.details && da.details.postes || [];
+        //     // Vérifier que *tous* les postes sont cochés
+        //     return aPostes.length > 0 && aPostes.every(p => p.livraisonComplete === true);
+        //  });
+        // }
+
+        //  // Activer / désactiver le bouton "Approuver"
+        //  this.getView().byId("_IDGenButton3").setEnabled(bCanApprove);
+           
         },
-
+        
         /**
          * Ouvre l'URL PDF dans un nouvel onglet
          */
@@ -131,10 +180,7 @@ sap.ui.define([
                 MessageToast.show("Pas de PDF associé");
             }
         //  // Scroll
-        //   const sItemId = "da_" + sDA; // ID du CustomListItem
-        //   const oItem = this.byId(sItemId);
-        // if (oItem && oItem.getDomRef) {
-        // oItem.getDomRef().scrollIntoView({ behavior: "smooth", block: "start" });
+        
         },
 
         onFilterApply: function() {
@@ -204,6 +250,12 @@ sap.ui.define([
             // On peut log le résultat
             console.log("Filter result =>", aFiltered);
         },
+
+        /* 
+         * Méthode onResetFilters
+         * Appelée lorsque l'utilisateur clique sur "Effacer" / "Réinitialiser".
+         * Objectif : vider les champs de filtre ET rétablir la liste originelle.
+          */
         onResetFilters: function() {
             const oModel = this.getView().getModel("myModel");
 
@@ -219,9 +271,17 @@ sap.ui.define([
 
             // 3. Rétablir la liste
             oModel.setProperty("/demandes", aAll);
-     }
-          
-        
+     },
+       /**
+         * Méthode appelée lorsque l’on clique sur le bouton "Approuver".
+         * On vérifie quelles DA sélectionnées sont "complètes" et on agit en conséquence.
+         */
+    //    onApprove: function() {
+    //     const oModel = this.getView().getModel("myModel");
+    //     const aSelectedDA = oModel.getProperty("/selectedDA") || [];
 
+        
+    // },
+          
     });
 });
