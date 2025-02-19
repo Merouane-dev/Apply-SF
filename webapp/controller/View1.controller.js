@@ -8,26 +8,77 @@ sap.ui.define([
     return Controller.extend("vignette.controller.View1", {
 
         onInit: function () {
-            // Création du modèle JSON
-            var oModel = new JSONModel();
+       
+        var oODataModel = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDA_SERVICE_2_SRV/");
 
-            // Chargement du fichier mockData.json (asynchrone)
-            let oPromise = oModel.loadData("/model/mockData.json");
-
-            // On affecte ce modèle à la vue, avec l'alias "myModel"
-            this.getView().setModel(oModel, "myModel");
-
-            // Quand le chargement est terminé, on affiche un console.log
-            oPromise.then(function () {
-            // On récupère la liste initiale des demandes
-               let aDemandes = oModel.getProperty("/demandes") || [];
-            // On la copie dans /allDemandes
-                oModel.setProperty("/allDemandes", aDemandes);
-
-
-           // Optionnel re-setter le modèle 
-                this.getView().setModel(oModel, "myModel");
-            }.bind(this));
+        // Important : Indiquer à la requête OData que l’on souhaite étendre ("expand") le DetailSet.
+        oODataModel.read("/HeaderSet", {
+            urlParameters: {
+                "$expand": "DetailSet"
+            },
+            success: function(oData) {
+      
+                // On mappe ensuite en un format local plus simple (par exemple "postes")
+                var aDemandes = oData.results.map(function(header) {
+                    // Récupération des lignes de détail
+                    var aPostes = header.DetailSet && header.DetailSet.results
+                        ? header.DetailSet.results.map(function(item) {
+                              return {
+                                  posteId        : item.PosteId,
+                                  Article        : item.Article,
+                                  NomSite        : item.NomSite,
+                                  DatePrevue     : item.DatePrevue,
+                                  QteAttendue    : item.QteAttendue,
+                                  QteLivree      : item.QteLivree,
+                                  LivraisonCompl : item.LivraisonCompl,
+                                  bonLivraison   : item.BonLivraison,
+                                  texteEntete    : item.TexteEntete
+                              };
+                          })
+                        : [];
+        
+                    return {
+                        demandeAchatId  : header.DemandeAchat,
+                        commandeAchatId : header.CommandeAchat,
+                        demandeur       : header.Demandeur,
+                        fournisseur     : header.Fournisseur,
+                        dateLivraison   : header.DateLivraison,
+                        montantTotal    : header.MontantTotal,
+        
+                        // Pour la sélection
+                        selected : false,
+        
+                        // Petit exemple : on récupère le premier bon de livraison
+                        // (si besoin de l’afficher au niveau "Header" dans la vue)
+                        details: {
+                            nomFournisseur  : header.Fournisseur,
+                            demandeur       : header.Demandeur,
+                            montantCommande : header.MontantTotal,
+                            bonLivraison    : aPostes[0] ? aPostes[0].bonLivraison : "",
+                            texteEntete     : aPostes[0] ? aPostes[0].texteEntete : "",
+        
+                            // On stocke le tableau complet des lignes
+                            postes          : aPostes
+                        }
+                    };
+                });
+        
+                // Création d’un JSONModel local
+                var oJsonModel = new sap.ui.model.json.JSONModel({
+                    demandes: aDemandes,            // liste pour la Table
+                    allDemandes: aDemandes.slice(), // copie pour filtrer
+                    filters: {},
+                    selectedDA: []
+                });
+        
+                // On l’assigne à la vue (alias "myModel")
+                this.getView().setModel(oJsonModel, "myModel");
+            }.bind(this),
+            error: function(oError) {
+                sap.m.MessageToast.show("Erreur lors de la lecture OData");
+                console.error("Erreur détail =", oError);
+            }
+        });
         },
 
         /**
@@ -150,23 +201,7 @@ sap.ui.define([
             oModel.setProperty("/selectedDA", aSelected);
         
          
-        //  // (1) Vérifier s’il y a au moins une DA sélectionnée
-        //  // (2) Parmi celles-ci, au moins une doit avoir tous ses postes "livraisonComplete" = true
-         
-        //  let bCanApprove = false;
-
-        // if (aSelected.length > 0) {
-        //  bCanApprove = aSelected.some(function (da) {
-        //     // Récupérer les postes de cette DA
-        //     const aPostes = da.details && da.details.postes || [];
-        //     // Vérifier que *tous* les postes sont cochés
-        //     return aPostes.length > 0 && aPostes.every(p => p.livraisonComplete === true);
-        //  });
-        // }
-
-        //  // Activer / désactiver le bouton "Approuver"
-        //  this.getView().byId("_IDGenButton3").setEnabled(bCanApprove);
-           
+       
         },
         
         /**
@@ -183,73 +218,101 @@ sap.ui.define([
         
         },
 
+       
         onFilterApply: function() {
-            // Récupération du modèle
+            // Récupération du modèle JSON local
             const oModel = this.getView().getModel("myModel");
         
-            // Lire les champs de filtre
+            // Lire les champs de filtre depuis /filters
             const oFilters = oModel.getProperty("/filters") || {};
-            const sFournisseur = oFilters.fournisseur || "";
-            const sDemandeur = oFilters.demandeur || "";
-            const sDemandeAchat = oFilters.demande_achat || "";
-            const sCommandeAchat = oFilters.commande_achat || "";
-            // (on ignore date_livraison pour l’exemple ou on la traite si besoin)
+            const sFournisseur   = oFilters.fournisseur      || "";
+            const sDemandeur     = oFilters.demandeur        || "";
+            const sDemandeAchat  = oFilters.demande_achat    || "";
+            const sCommandeAchat = oFilters.commande_achat   || "";
         
-            // Récupérer la liste originale
+            const sDateLivraison = oFilters.date_livraison   || "";
+        
+            // Récupérer la liste *complète* (non filtrée)
             const aAllDemandes = oModel.getProperty("/allDemandes") || [];
         
             // Filtrer localement
             let aFiltered = aAllDemandes.filter(dem => {
-                
-                // On décide si on veut filtrer en *substring* (inclus)
-                // ou *exact match*.
-                // Exemple simple : substring case-insensitive.
-        
                 let bKeep = true;
         
-                // Fournisseur
+                // 1) Filtre sur fournisseur
                 if (sFournisseur) {
-                    // On compare en lowerCase
-                    let sFourn = dem.fournisseur ? dem.fournisseur.toLowerCase() : "";
+                    let sFourn = (dem.fournisseur || "").toLowerCase();
                     if (!sFourn.includes(sFournisseur.toLowerCase())) {
                         bKeep = false;
                     }
                 }
         
-                // Demandeur
+                // 2) Filtre sur demandeur
                 if (bKeep && sDemandeur) {
-                    let sDem = dem.demandeur ? dem.demandeur.toLowerCase() : "";
+                    let sDem = (dem.demandeur || "").toLowerCase();
                     if (!sDem.includes(sDemandeur.toLowerCase())) {
                         bKeep = false;
                     }
                 }
         
-                // Demande d'achat
+                // 3) Filtre sur demande d'achat
                 if (bKeep && sDemandeAchat) {
-                    let sDa = dem.demandeAchatId ? dem.demandeAchatId.toLowerCase() : "";
-                    // ou if (sDa !== sDemandeAchat) pour un match exact
+                    let sDa = (dem.demandeAchatId || "").toLowerCase();
                     if (!sDa.includes(sDemandeAchat.toLowerCase())) {
                         bKeep = false;
                     }
                 }
         
-                // Commande d'achat
+                // 4) Filtre sur commande d'achat
                 if (bKeep && sCommandeAchat) {
-                    let sCa = dem.commandeAchatId ? dem.commandeAchatId.toLowerCase() : "";
+                    let sCa = (dem.commandeAchatId || "").toLowerCase();
                     if (!sCa.includes(sCommandeAchat.toLowerCase())) {
                         bKeep = false;
                     }
                 }
         
+                // 5) Filtre sur la date de livraison
+                
+                if (bKeep && sDateLivraison) {
+                    // 1) Convertir la date saisie (sDateLivraison) en "YYYY-MM-DD"
+                    let sUserDate = "";
+                    if (sDateLivraison instanceof Date) {
+                      const iDay   = sDateLivraison.getDate();
+                      const iMonth = sDateLivraison.getMonth() + 1;
+                      const iYear  = sDateLivraison.getFullYear();
+                      sUserDate = `${iYear}-${String(iMonth).padStart(2,"0")}-${String(iDay).padStart(2,"0")}`;
+                    }
+                  
+                    // 2) Extraire la date de dem.dateLivraison
+                    let sDataDate = "";
+                    if (typeof dem.dateLivraison === "string") {
+                      // ex: "2025-01-24T00:00:00"
+                      sDataDate = dem.dateLivraison.substring(0, 10); // => "2025-01-24"
+                    } else if (dem.dateLivraison instanceof Date) {
+                      // ex: objet Date
+                      let d = dem.dateLivraison;
+                      const iDay   = d.getDate();
+                      const iMonth = d.getMonth() + 1;
+                      const iYear  = d.getFullYear();
+                      sDataDate = `${iYear}-${String(iMonth).padStart(2,"0")}-${String(iDay).padStart(2,"0")}`;
+                    }
+                  
+                    // 3) Comparaison
+                    if (sUserDate && sDataDate && sDataDate !== sUserDate) {
+                      bKeep = false;
+                    }
+                  }
+        
                 return bKeep;
             });
         
-            // On assigne le résultat filtré à /demandes
+            // Assigner le résultat filtré à /demandes
             oModel.setProperty("/demandes", aFiltered);
         
-            // On peut log le résultat
+            // Log le résultat
             console.log("Filter result =>", aFiltered);
         },
+
 
         /* 
          * Méthode onResetFilters
@@ -276,12 +339,12 @@ sap.ui.define([
          * Méthode appelée lorsque l’on clique sur le bouton "Approuver".
          * On vérifie quelles DA sélectionnées sont "complètes" et on agit en conséquence.
          */
-    //    onApprove: function() {
-    //     const oModel = this.getView().getModel("myModel");
-    //     const aSelectedDA = oModel.getProperty("/selectedDA") || [];
+       onApprove: function() {
+        const oModel = this.getView().getModel("myModel");
+        const aSelectedDA = oModel.getProperty("/selectedDA") || [];
 
         
-    // },
+    },
           
     });
 });

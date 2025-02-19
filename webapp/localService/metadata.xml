@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ZDA_SERVICE_2_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="Header" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DemandeAchat"/>
+                </Key>
+                <Property Name="Fournisseur" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Busn. Partner" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="Demandeur" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Busn. Partner" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="DemandeAchat" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Demande d'achat" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="CommandeAchat" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="Commande d'achat" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="DateLivraison" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Date" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="MontantTotal" Type="Edm.Decimal" Nullable="false" Precision="25" Scale="0" sap:unicode="false" sap:label="Montant total" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <NavigationProperty Name="DetailSet" Relationship="ZDA_SERVICE_2_SRV.Header_to_Detail" FromRole="FromRole_Header_to_Detail" ToRole="ToRole_Header_to_Detail"/>
+            </EntityType>
+            <EntityType Name="Detail" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DemandeAchat"/>
+                    <PropertyRef Name="PosteId"/>
+                </Key>
+                <Property Name="DemandeAchat" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Demande d'achat" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="PosteId" Type="Edm.Int32" Nullable="false" sap:unicode="false" sap:label="POSTE ID" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="Article" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Article" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="NomSite" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Nom du site" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="DatePrevue" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Date" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="QteAttendue" Type="Edm.Int32" Nullable="false" sap:unicode="false" sap:label="QTE ATTENDUE" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="QteLivree" Type="Edm.Int32" Nullable="false" sap:unicode="false" sap:label="QTE LIVREE" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="LivraisonCompl" Type="Edm.Boolean" Nullable="false" sap:unicode="false" sap:label="Livraison complete" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="BonLivraison" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Bon de livraison" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="TexteEntete" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Bon de livraison" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+            </EntityType>
+            <ComplexType Name="LivraisonStatus">
+                <Property Name="LIvree" Type="Edm.Boolean" Nullable="false" sap:label="Commande livree" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </ComplexType>
+            <Association Name="Header_to_Detail" sap:content-version="1">
+                <End Type="ZDA_SERVICE_2_SRV.Header" Multiplicity="*" Role="FromRole_Header_to_Detail"/>
+                <End Type="ZDA_SERVICE_2_SRV.Detail" Multiplicity="*" Role="ToRole_Header_to_Detail"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_Header_to_Detail">
+                        <PropertyRef Name="DemandeAchat"/>
+                    </Principal>
+                    <Dependent Role="ToRole_Header_to_Detail">
+                        <PropertyRef Name="DemandeAchat"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <EntityContainer Name="ZDA_SERVICE_2_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="HeaderSet" EntityType="ZDA_SERVICE_2_SRV.Header" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="DetailSet" EntityType="ZDA_SERVICE_2_SRV.Detail" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <AssociationSet Name="Header_to_DetailSet" Association="ZDA_SERVICE_2_SRV.Header_to_Detail" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="HeaderSet" Role="FromRole_Header_to_Detail"/>
+                    <End EntitySet="DetailSet" Role="ToRole_Header_to_Detail"/>
+                </AssociationSet>
+                <FunctionImport Name="SetLivraisonStatus" ReturnType="ZDA_SERVICE_2_SRV.LivraisonStatus" m:HttpMethod="POST">
+                    <Parameter Name="PosteId" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="DemandeAchat" Type="Edm.String" Mode="In"/>
+                </FunctionImport>
+            </EntityContainer>
+            <Annotation Term="Core.SchemaVersion" String="1.0.0" xmlns="http://docs.oasis-open.org/odata/ns/edm"/>
+            <atom:link rel="self" href="http://sap.dapot.fr:50000/sap/opu/odata/sap/ZDA_SERVICE_2_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="http://sap.dapot.fr:50000/sap/opu/odata/sap/ZDA_SERVICE_2_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
